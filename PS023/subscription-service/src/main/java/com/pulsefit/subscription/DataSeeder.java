@@ -1,0 +1,3 @@
+package com.pulsefit.subscription;
+import org.springframework.boot.CommandLineRunner; import org.springframework.context.annotation.*;
+@Configuration public class DataSeeder { @Bean CommandLineRunner seed(PlanRepository r){return a->{if(r.count()==0){Plan p1=new Plan();p1.setName("Monthly");p1.setDurationDays(30);p1.setPrice(999);p1.setDescription("30-day all-facility membership");r.save(p1);Plan p2=new Plan();p2.setName("Quarterly");p2.setDurationDays(90);p2.setPrice(2499);p2.setDescription("90-day all-facility membership");r.save(p2);Plan p3=new Plan();p3.setName("Annual");p3.setDurationDays(365);p3.setPrice(8999);p3.setDescription("365-day all-facility membership");r.save(p3);}};} }

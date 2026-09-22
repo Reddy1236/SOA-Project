@@ -1,0 +1,1 @@
+package com.pulsefit.subscription; import java.util.*; import org.springframework.data.jpa.repository.JpaRepository; public interface SubscriptionRepository extends JpaRepository<Subscription,Long>{List<Subscription> findByMemberId(Long memberId); Optional<Subscription> findFirstByMemberIdAndStatusOrderByEndDateDesc(Long memberId,String status);}

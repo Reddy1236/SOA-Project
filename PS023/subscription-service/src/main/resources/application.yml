@@ -1,0 +1,22 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: subscription-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/pulsefit_subscription?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Kolkata
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

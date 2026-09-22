@@ -1,0 +1,10 @@
+package com.pulsefit.auth;
+import io.jsonwebtoken.Jwts; import io.jsonwebtoken.security.Keys; import java.nio.charset.StandardCharsets; import java.time.Instant; import java.util.Date; import java.util.Map; import javax.crypto.SecretKey; import org.springframework.http.ResponseEntity; import org.springframework.security.crypto.password.PasswordEncoder; import org.springframework.web.bind.annotation.*;
+@RestController @RequestMapping("/api/auth") public class AuthController {
+ private final PasswordEncoder encoder; private final SecretKey key=Keys.hmacShaKeyFor("PulseFit-PS023-JWT-Secret-Key-2026-ChangeMe-32Bytes".getBytes(StandardCharsets.UTF_8));
+ private final Map<String,String> users=new java.util.concurrent.ConcurrentHashMap<>();
+ public AuthController(PasswordEncoder e){encoder=e; users.put("admin",encoder.encode("admin123")); users.put("user",encoder.encode("user123"));}
+ @PostMapping("/register") public ResponseEntity<?> register(@RequestBody LoginRequest r){if(r.username()==null||r.password()==null||r.username().isBlank()||r.password().isBlank())return ResponseEntity.badRequest().body(Map.of("message","Username and password are required")); if(users.containsKey(r.username()))return ResponseEntity.status(409).body(Map.of("message","Username already exists")); users.put(r.username(),encoder.encode(r.password())); return ResponseEntity.ok(Map.of("message","User registered","username",r.username()));}
+ @PostMapping("/login") public ResponseEntity<?> login(@RequestBody LoginRequest r){String hash=users.get(r.username()); if(hash==null||!encoder.matches(r.password(),hash))return ResponseEntity.status(401).body(Map.of("message","Invalid username or password")); Instant now=Instant.now(); String token=Jwts.builder().subject(r.username()).claim("role","USER").issuedAt(Date.from(now)).expiration(Date.from(now.plusSeconds(7200))).signWith(key).compact(); return ResponseEntity.ok(Map.of("token",token,"tokenType","Bearer","expiresIn",7200,"username",r.username()));}
+ public record LoginRequest(String username,String password){}
+}
